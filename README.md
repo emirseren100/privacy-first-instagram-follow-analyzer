@@ -1,77 +1,128 @@
-# Privacy-first Instagram Follow Analyzer
+# Follow Clarity
 
-Kendi Instagram veri dışa aktarım dosyalarını tarayıcı içinde analiz eden Next.js uygulaması.
+Privacy-first Instagram follow analyzer. Upload your own Instagram export and analyze follower/following relationships locally in your browser.
 
-## Özellikler
+**Live Demo:** https://follow-clarity.netlify.app
 
-- Instagram kullanıcı adıyla veri çekmez.
-- Instagram girişi, şifre, cookie, session veya token istemez.
-- Scraping ya da resmi olmayan Instagram API kullanmaz.
-- ZIP veya JSON dosyalarını yalnızca kullanıcının cihazında, tarayıcı içinde işler.
-- ZIP içindeki veya doğrudan yüklenen HTML export dosyalarını DOMParser ile tarayıcı içinde işler.
-- `followers_1.json`, `followers_2.json` ve `following.json` benzeri Instagram export dosyalarından `string_list_data[].value` alanlarını okur.
-- Kullanıcı adlarını küçük harfe çevirir, baştaki `@` işaretini kaldırır, boşlukları temizler ve tekrarları siler.
+## What It Does
 
-## Kurulum
+- Shows people you follow who do not follow you back.
+- Shows people who follow you but you do not follow back.
+- Shows mutual follows.
+- Shows total followers and following counts.
+- Supports search, A-Z / Z-A sorting, copy usernames, CSV export, and Instagram profile links.
+
+## Privacy Model
+
+Follow Clarity does not scrape Instagram, does not ask for login details, and does not use unofficial Instagram APIs.
+
+The app only analyzes files selected by the user:
+
+- Instagram export ZIP files
+- Instagram followers/following JSON files
+- Instagram followers/following HTML files
+
+All parsing happens locally in the browser. Uploaded export data is not sent to an application server.
+
+## Supported Export Files
+
+The parser supports files such as:
+
+- `followers_1.json`
+- `followers_2.json`
+- `followers_1 (1).json`
+- `following.json`
+- `following_1.json`
+- `followers.html`
+- `following.html`
+- ZIP exports containing those files
+
+It reads usernames from common Instagram export structures including:
+
+- `string_list_data[].value`
+- `string_list_data[].href`
+- `string_map_data`
+- safe `title` fallbacks
+- Instagram profile href formats such as `/username` and `/_u/username`
+
+## How To Download Instagram Export Data
+
+1. Open Instagram settings.
+2. Go to Account Center.
+3. Open "Your information and permissions".
+4. Choose "Download your information".
+5. Select your Instagram account.
+6. Choose the "Followers and following" data category.
+7. Set date range to **All time / Tum zamanlar**.
+8. Choose JSON format if available. HTML is also supported.
+9. Download the ZIP export when Instagram prepares it.
+10. Upload the ZIP file into Follow Clarity.
+
+Limited date ranges, such as "last year", can produce incomplete follower counts. Use **All time / Tum zamanlar** for the most accurate result.
+
+## Tech Stack
+
+- Next.js
+- TypeScript
+- React
+- Tailwind CSS
+- JSZip
+- Vitest
+- jsdom
+
+## Local Development
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Run the development server:
+
+```bash
 npm run dev
 ```
 
-Tarayıcıda:
+Open:
 
 ```text
 http://localhost:3000
 ```
 
-Windows PowerShell yürütme ilkesi `npm` komutunu engellerse aynı komutları `npm.cmd` ile çalıştırabilirsin:
+On Windows PowerShell, use `npm.cmd` if normal `npm` commands are blocked:
 
 ```bash
 npm.cmd install
 npm.cmd run dev
 ```
 
-Testleri çalıştırmak için:
+Run tests:
 
 ```bash
 npm run test
 ```
 
-## Instagram verisini indirme
+Build:
 
-1. Instagram uygulamasında veya web sitesinde hesap ayarlarına gir.
-2. Account Center / Your information and permissions bölümünden Download your information akışını aç.
-3. Instagram hesabını seç.
-4. Followers and following verilerini içeren export oluştur.
-5. Tarih aralığı olarak **All time / Tüm zamanlar** seç. Son 1 yıl gibi sınırlı aralıklar mevcut tüm takipçi listesini vermeyebilir.
-6. Format olarak JSON seç. HTML export da desteklenir.
-7. Veri kategorisi olarak **Followers and following** seç.
-8. Hazır olduğunda ZIP dosyasını indir.
-9. Bu uygulamada ZIP dosyasını doğrudan yükle veya ZIP içinden ilgili JSON/HTML dosyalarını seç.
+```bash
+npm run build
+```
 
-Instagram arayüzündeki menü adları zamanla değişebilir; önemli olan JSON formatında kendi veri export dosyanı indirmen.
+## Limitations
 
-## Gizlilik modeli
+- This app does not work by entering an Instagram username.
+- It does not fetch Instagram data from the internet.
+- It does not use login, password, cookie, session, or token access.
+- Results depend on the export file selected by the user.
+- Incomplete exports may produce incomplete counts.
 
-Bu uygulama client-side çalışır. ZIP dosyası JSZip ile tarayıcı belleğinde açılır, JSON dosyaları yine tarayıcıda parse edilir ve sonuçlar yerel state içinde hesaplanır. Dosya içeriği uygulama sunucusuna gönderilmez.
+## Deployment
 
-Uygulama yalnızca statik arayüz dosyalarını servis eder. Analiz için kullanılan takipçi ve takip edilen kişi verileri cihazından çıkmaz.
+This project is deployed on Netlify:
 
-## Limitasyonlar
+```text
+https://follow-clarity.netlify.app
+```
 
-- Bu uygulama Instagram scrape etmez.
-- Kullanıcı adı yazarak çalışmaz.
-- Instagram login bilgisi, cookie, session veya token ile çalışmaz.
-- Resmi ya da resmi olmayan Instagram API üzerinden veri çekmez.
-- Sonuçların doğruluğu yüklenen Instagram export dosyasının güncelliğine bağlıdır.
-- Sınırlı tarih aralığıyla alınan exportlar eksik görünebilir; uygulama düşük takipçi sayısı, tek followers dosyası veya takip edilen/takipçi sayısı arasında şüpheli fark görürse uyarı gösterir.
-
-## Hesaplanan sonuçlar
-
-- People I follow who do not follow me back
-- People who follow me but I do not follow back
-- Mutual follows
-- Total followers and following counts
-
-Her listede arama, A-Z / Z-A sıralama, kullanıcı adlarını kopyalama, CSV export ve Instagram profil linki bulunur.
+Netlify build settings are defined in `netlify.toml`.
